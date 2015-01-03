@@ -176,11 +176,24 @@ done
 # BEGINNING OF MAIN 
 ##########################################################
 
-#rotate_line & # Run the function in the background 
-#ROTATE_PID=$! # Capture the PID of the last background process
-
 ### Set a Trap ###
 trap ’trap_exit; exit 2’ 1 2 3 15
+
+main() {
+	rotate_line &  # Run the function in the background 
+	ROTATE_PID=$!  # Capture the PID of the last background process
+	reflector_mirrorlist
+	devenv_init
+	dirmngr_pacman_key_init
+	add_haskell_core_repo
+	add_openrc_eudev_repo
+	aur_sh_init
+	aura_bin_init
+	openrc_init
+}
+
+
+main
 
 #BREAK_OUT=’N’
 #proc_watch |& # Start proc_watch as a co-process!!!!
