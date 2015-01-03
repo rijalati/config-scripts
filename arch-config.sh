@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # SCRIPT: arch-config.sh 
 # AUTHOR: Ritchie J Latimore 
 # DATE: 2015-01-03
@@ -36,21 +36,24 @@ function reflector_mirrorlist
 	sudo cp $mirlst $mirlst_bk
 	sudo sed -i 's/^#Server/Server/' $mirlst_bk
 	sudo reflector --verbose --country 'United States' -l 200 -p http --sort rate —-save $mirlst
+	sudo wait ?!
 }
 
 function devenv_init
 {
 	sudo pacman -S --needed base-devel git cvs cvsps perl-libwww perl-term-readkey perl-mime-tools perl-net-smtp-ssl perl-authen-sasl subversion rsync fakeroot
+	sudo wait ?!
+	
 }
 
 function dirmngr_pacman_key_init
 {
 	sudo dirmngr > /dev/null 2>&1 &
-	sleep 10
+	sudo wait ?!
 	sudo pacman-key --init
-	sleep 10
+	sudo wait ?!
 	sudo pacman-key --populate
-	sleep 10
+	sudo wait ?!
 }
 
 function add_haskell_core_repo
@@ -59,10 +62,11 @@ function add_haskell_core_repo
 		\[haskell\-core\] \
 		Server\ \=\ http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n' /etc/pacman.conf
 	sudo pacman-key -r $haskell_core_key
-	sleep 5
+	sudo wait ?!
 	sudo pacman-key --lsign-key $haskell_core_key
+	sudo wait ?!
 	sudo pacman -Syu
-	sleep 5
+	sudo wait ?!
 }
 
 function add_openrc_eudev_repo
@@ -72,10 +76,11 @@ function add_openrc_eudev_repo
 	SigLevel\ \=\ Optional\ TrustAll \
 	Server\ \=\ https\:\/\/downloads\.sourceforge\.net\/projects\/mefiles\/Manjaro\/\$repo\/\$arch\n'
 	sudo pacman-key -r $openrc_eudev_key
-	sleep 5
+	sudo wait ?!
 	sudo pacman-key --lsign-key $openrc_eudev_key
+	sudo wait ?!
 	sudo pacman -Syu
-	sleep 5
+	sudo wait ?!
 }
 
 function aur_sh_init
@@ -109,6 +114,7 @@ function aura_bin_init
 function aura_src_init
 {
 	aura_sh_init
+	wait ?!
 	sudo pacman -S --needed ghc
 	sudo pacman -S --needed haskell-regex-base haskell-parsec haskell-syb haskell-mtl haskell-json haskell-temporary
 	bash <(curl aur.sh) -si haskell-regex-pcre-builtin haskell-http-conduit haskell-reflection haskell-lens haskell-lens-aeson haskell-psqueue haskell-wreq haskell-aur aura
@@ -177,7 +183,7 @@ done
 ##########################################################
 
 ### Set a Trap ###
-trap ’trap_exit; exit 2’ 1 2 3 15
+#trap ’trap_exit; exit 2’ 1 2 3 15
 
 main() {
 	#rotate_line &  # Run the function in the background 
