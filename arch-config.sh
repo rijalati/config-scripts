@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # created: 2015-01-02
 # last revision: 2015-01-02
 # author: ritchie latimore
@@ -21,7 +21,13 @@ fi
 
 sudo sed -i '/\[extra\]/i \
 \[haskell\-core\] \
-http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n' /etc/pacman.conf
+Server\ \=\ http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n' /etc/pacman.conf
+
+sudo dirmngr --daemon > /dev/null 2>&1
+sudo pacman-key --init
+sudo pacman-key --populate
+sudo pacman-key -r 4209170B
+sudo pacman-key --lsign-key 4209170B
 
 sudo pacman -Syy
 sudo pacman -Syu --noconfirm
