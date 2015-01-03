@@ -4,6 +4,11 @@
 # author: ritchie latimore
 
 cd /tmp
+sudo pacman -Syy
+sudo pacman -Syu --noconfirm
+sudo pacman -S --needed --noconfirm base-devel git cvs cvsps2 perl-libwww perl-term-readkey perl-mime-tools \
+perl-net-smtp-ssl perl-authen-sasl subversion 
+
 wget https://github.com/stuartpb/aur.sh/archive/master.zip
 sudo unzip /tmp/master.zip
 
@@ -29,9 +34,6 @@ sudo pacman-key --populate
 sudo pacman-key -r 4209170B
 sudo pacman-key --lsign-key 4209170B
 
-sudo pacman -Syy
-sudo pacman -Syu --noconfirm
-sudo pacman -S --needed --noconfirm base-devel git cvs cvsps
 sudo pacman -S --needed --noconfirm ghc
 sudo pacman -S --needed --noconfirm haskell-regex-base haskell-parsec haskell-syb haskell-mtl haskell-json haskell-temporary
 
