@@ -17,7 +17,7 @@ sudo pacman -S --needed base-devel git cvs cvsps perl-libwww perl-term-readkey p
 
 sudo sed -i '/\[extra\]/i \
 \[haskell\-core\] \
-Server\ \=\ http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n\n' /etc/pacman.conf
+Server\ \=\ http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n' /etc/pacman.conf
 
 sudo dirmngr > /dev/null 2>&1 &
 sleep 10
@@ -29,10 +29,18 @@ sudo pacman-key -r 4209170B
 sleep 5
 sudo pacman-key --lsign-key 4209170B
 
-sudo pacman -Syy
+sudo pacman -Syu
 sleep 5
-sudo pacman -S --needed ghc
-sudo pacman -S --needed haskell-regex-base haskell-parsec haskell-syb haskell-mtl haskell-json haskell-temporary
+
+sudo sed -i '/\[extra\]/i \
+\[openrc-eudev\] \
+SigLevel\ \=\ Optional\ TrustAll \
+Server\ \=\ https\:\/\/downloads\.sourceforge\.net\/projects\/mefiles\/Manjaro\/\$repo\/\$arch\n'
+sudo pacman-key -r 518B147D
+sleep 5
+sudo pacman-key --lsign-key 518B147D
+sudo pacman -Syu
+sleep 5
 
 cd /tmp
 sudo wget https://github.com/stuartpb/aur.sh/archive/master.zip
@@ -52,4 +60,14 @@ fi
 
 cd `mktemp -d`
 cp /tmp/aur.sh-master/aur.sh .
-bash <(curl aur.sh) -si haskell-regex-pcre-builtin haskell-http-conduit haskell-reflection haskell-lens haskell-lens-aeson haskell-psqueue haskell-wreq haskell-aur aura
+bash <(curl aur.sh) -si aura-bin
+#sudo pacman -S --needed ghc
+#sudo pacman -S --needed haskell-regex-base haskell-parsec haskell-syb haskell-mtl haskell-json haskell-temporary
+#bash <(curl aur.sh) -si haskell-regex-pcre-builtin haskell-http-conduit haskell-reflection haskell-lens haskell-lens-aeson haskell-psqueue haskell-wreq haskell-aur aura
+
+sudo aura -S openrc-base
+sudo aura -S openrc-desktop
+sudo aura -S networkmanager-openrc alsa-utils-openrc acpid-openrc
+sudo rc-update add acpid default
+sudo aura -S pm-utils consolekit-openrc
+sudo aura -S eudev-openrc eudev eudev-systemdcompat upower-pm-utils-eudev
