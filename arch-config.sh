@@ -3,9 +3,10 @@
 # last revision: 2015-01-02
 # author: ritchie latimore
 
+sudo passwd root
 sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 sudo sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
-sudo rankmirrors -n 10 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+su - -c 'rankmirrors -n 10 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist'
 
 sudo pacman -Syy
 sudo pacman -Syu
@@ -17,8 +18,11 @@ sudo sed -i '/\[extra\]/i \
 Server\ \=\ http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n\n' /etc/pacman.conf
 
 sudo dirmngr > /dev/null 2>&1 &
+wait 10
 sudo pacman-key --init
+wait 10
 sudo pacman-key --populate
+wait 10
 sudo pacman-key -r 4209170B
 sudo pacman-key --lsign-key 4209170B
 
@@ -43,5 +47,6 @@ then
 fi
 
 cd `mktemp -d`
-bash <$(curl /tmp/aur.sh-master/aur.sh) -si haskell-regex-pcre-builtin haskell-http-conduit
-bash <$(curl /tmp/aur.sh-master/aur.sh) -si aura
+cp /tmp/aur.sh-master/aur.sh .
+bash <(curl aur.sh) -si haskell-regex-pcre-builtin haskell-http-conduit
+bash <(curl aur.sh) -si aura
