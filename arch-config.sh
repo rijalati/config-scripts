@@ -33,8 +33,8 @@ function reflector_mirrorlist
 	sudo pacman -Syy
 	sudo pacman -Syu
 	sudo pacman -S reflector 
-	sudo cp $mirlst $mirlst.bk
-	sudo sed -i 's/^#Server/Server/' $mirlst.bk
+	sudo cp $mirlst $mirlst_bk
+	sudo sed -i 's/^#Server/Server/' $mirlst_bk
 	sudo reflector --verbose --country 'United States' -l 200 -p http --sort rate —-save $mirlst
 }
 
@@ -58,9 +58,9 @@ function add_haskell_core_repo
 	sudo sed -i '/\[extra\]/i \
 		\[haskell\-core\] \
 		Server\ \=\ http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n' /etc/pacman.conf
-	sudo pacman-key -r $haskell-core.key
+	sudo pacman-key -r $haskell_core_key
 	sleep 5
-	sudo pacman-key --lsign-key $haskell-core.key
+	sudo pacman-key --lsign-key $haskell_core_key
 	sudo pacman -Syu
 	sleep 5
 }
@@ -71,9 +71,9 @@ function add_openrc_eudev_repo
 	\[openrc-eudev\] \
 	SigLevel\ \=\ Optional\ TrustAll \
 	Server\ \=\ https\:\/\/downloads\.sourceforge\.net\/projects\/mefiles\/Manjaro\/\$repo\/\$arch\n'
-	sudo pacman-key -r $openrc-eudev.key
+	sudo pacman-key -r $openrc_eudev_key
 	sleep 5
-	sudo pacman-key --lsign-key $openrc-eudev.key
+	sudo pacman-key --lsign-key $openrc_eudev_key
 	sudo pacman -Syu
 	sleep 5
 }
@@ -180,8 +180,8 @@ done
 trap ’trap_exit; exit 2’ 1 2 3 15
 
 main() {
-	rotate_line &  # Run the function in the background 
-	ROTATE_PID=$!  # Capture the PID of the last background process
+	#rotate_line &  # Run the function in the background 
+	#ROTATE_PID=$!  # Capture the PID of the last background process
 	reflector_mirrorlist
 	devenv_init
 	dirmngr_pacman_key_init
