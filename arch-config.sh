@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # created: 2015-01-02
 # last revision: 2015-01-02
 # author: ritchie latimore
