@@ -16,7 +16,7 @@
 ########################################################## 
 # DEFINE FUNCTIONS HERE 
 ##########################################################
-function mirrorl_rank
+function reflector_mirrorlist
 {
 	sudo pacman -Syy
 	sudo pacman -Syu
@@ -26,7 +26,7 @@ function mirrorl_rank
 	sudo reflector --verbose --country 'United States' -l 200 -p http --sort rate —-save /etc/pacman.d/mirrorlist
 }
 
-function devenv
+function devenv_init
 {
 	sudo pacman -S --needed base-devel git cvs cvsps perl-libwww perl-term-readkey perl-mime-tools perl-net-smtp-ssl perl-authen-sasl subversion rsync fakeroot
 }
@@ -41,7 +41,7 @@ function dirmngr_pacman_key_init
 	sleep 10
 }
 
-function add_haskell_core
+function add_haskell_core_repo
 {
 	sudo sed -i '/\[extra\]/i \
 		\[haskell\-core\] \
@@ -53,7 +53,7 @@ function add_haskell_core
 	sleep 5
 }
 
-function add_openrc_eudev
+function add_openrc_eudev_repo
 {
 	sudo sed -i '/\[extra\]/i \
 	\[openrc-eudev\] \
@@ -111,11 +111,40 @@ function openrc_init
 	sudo aura -S pm-utils consolekit-openrc
 	sudo aura -S eudev-openrc eudev eudev-systemdcompat upower-pm-utils-eudev
 }
+
+function rotate_line
+{
+INTERVAL=1	# Sleep time between "twirls"
+TCOUNT=0	# For each TCOUNT the line twirls one increment
+
+	while :		# Loop forever...until this function is killed
+	do
+	TCOUNT=`expr $TCOUNT + 1`
+	
+	case $TCOUNT in
+		"1") echo ’-’"\b\c"
+			sleep $INTERVAL
+			;;
+		"2") echo ’\\’"\b\c"
+			sleep $INTERVAL
+			;;
+		"3") echo "\|\b\c"
+        		sleep $INTERVAL
+        		;;
+        	"4") echo "/\b\c" 
+        		sleep $INTERVAL
+        		;;
+        	*)	TCOUNT="0" ;; # Reset the TCOUNT to "0", zero.
+        esac
+done
+}
+
 ########################################################## 
 # BEGINNING OF MAIN 
 ##########################################################
 
-
+rotate_line & # Run the function in the background 
+ROTATE_PID=$! # Capture the PID of the last background process
 
 
 # End of script
