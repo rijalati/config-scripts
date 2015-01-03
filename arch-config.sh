@@ -3,10 +3,14 @@
 # last revision: 2015-01-02
 # author: ritchie latimore
 
+sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+sudo sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
+sudo rankmirrors -n 10 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+
 sudo pacman -Syy
 sudo pacman -Syu
 sudo pacman -S --needed base-devel git cvs cvsps2 perl-libwww perl-term-readkey perl-mime-tools \
-perl-net-smtp-ssl perl-authen-sasl subversion 
+perl-net-smtp-ssl perl-authen-sasl subversion rsync
 
 sudo sed -i '/\[extra\]/i \
 \[haskell\-core\] \
