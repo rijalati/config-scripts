@@ -4,13 +4,25 @@
 # DATE: 2015-01-03
 # Rev: 0.0.1a  
 #
-# REV LIST: 0.0.1a
+# REV LIST: 0.0.2a
 # PLATFORM: arch, archbang
 # PURPOSE: workstation/server setup on arch & archbang linux
 ########################################################## 
 # DEFINE FILES AND VARIABLES HERE 
 ##########################################################
 
+mirlst="/etc/pacman.d/mirrorlist"
+mirlst_bk="/etc/pacman.d/mirrorlist.backup"
+haskell_core_key="4209170B"
+openrc_eudev_key="518B147D"
+aur_sh_url="https://github.com/stuartpb/aur.sh/archive/master.zip"
+
+# Set up the correct echo command usage. Many Linux # distributions will execute in Bash even if the
+# script specifies Korn shell. Bash shell requires # we use echo -e when we use \n, \c, etc.
+case $SHELL in
+	*/bin/bash) alias echo="echo -e"
+	;;
+esac
 
 
 ########################################################## 
@@ -21,9 +33,9 @@ function reflector_mirrorlist
 	sudo pacman -Syy
 	sudo pacman -Syu
 	sudo pacman -S reflector 
-	sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-	sudo sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
-	sudo reflector --verbose --country 'United States' -l 200 -p http --sort rate —-save /etc/pacman.d/mirrorlist
+	sudo cp $mirlst $mirlst.bk
+	sudo sed -i 's/^#Server/Server/' $mirlst.bk
+	sudo reflector --verbose --country 'United States' -l 200 -p http --sort rate —-save $mirlst
 }
 
 function devenv_init
@@ -46,9 +58,9 @@ function add_haskell_core_repo
 	sudo sed -i '/\[extra\]/i \
 		\[haskell\-core\] \
 		Server\ \=\ http\:\/\/xsounds\.org\/\~haskell\/core\/\$arch\n' /etc/pacman.conf
-	sudo pacman-key -r 4209170B
+	sudo pacman-key -r $haskell-core.key
 	sleep 5
-	sudo pacman-key --lsign-key 4209170B
+	sudo pacman-key --lsign-key $haskell-core.key
 	sudo pacman -Syu
 	sleep 5
 }
@@ -59,9 +71,9 @@ function add_openrc_eudev_repo
 	\[openrc-eudev\] \
 	SigLevel\ \=\ Optional\ TrustAll \
 	Server\ \=\ https\:\/\/downloads\.sourceforge\.net\/projects\/mefiles\/Manjaro\/\$repo\/\$arch\n'
-	sudo pacman-key -r 518B147D
+	sudo pacman-key -r $openrc-eudev.key
 	sleep 5
-	sudo pacman-key --lsign-key 518B147D
+	sudo pacman-key --lsign-key $openrc-eudev.key
 	sudo pacman -Syu
 	sleep 5
 }
@@ -69,7 +81,7 @@ function add_openrc_eudev_repo
 function aur_sh_init
 {
 	cd /tmp
-	sudo wget https://github.com/stuartpb/aur.sh/archive/master.zip
+	sudo wget $aursh_url
 	sudo unzip /tmp/master.zip
 	cd /tmp/aur.sh-master
 	
@@ -139,12 +151,40 @@ TCOUNT=0	# For each TCOUNT the line twirls one increment
 done
 }
 
+function trap_exit
+{
+# Tell the co-process to break out of the loop
+BREAK_OUT=’Y’
+print -p $BREAK_OUT # Use "print -p" to talk to the co-process
+}
+
+function proc_watch
+{
+# This function is started as a co-process!!!
+    while :      # Loop forever
+do
+# some stuff to do 
+	read $BREAK_OUT # Do NOT need a "-p" to read!
+	if [[ $BREAK_OUT = ’Y’ ]]
+	then
+	return 0
+	fi
+done
+}
+
 ########################################################## 
 # BEGINNING OF MAIN 
 ##########################################################
 
-rotate_line & # Run the function in the background 
-ROTATE_PID=$! # Capture the PID of the last background process
+#rotate_line & # Run the function in the background 
+#ROTATE_PID=$! # Capture the PID of the last background process
+
+### Set a Trap ###
+trap ’trap_exit; exit 2’ 1 2 3 15
+
+#BREAK_OUT=’N’
+#proc_watch |& # Start proc_watch as a co-process!!!!
+#PW_PID=$1 # Process ID of the last background job
 
 
 # End of script
