@@ -3,15 +3,18 @@
 # last revision: 2015-01-02
 # author: ritchie latimore
 
-sudo passwd root
-sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-sudo sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
-su - -c 'rankmirrors -n 10 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist'
 
 sudo pacman -Syy
 sudo pacman -Syu
+sudo pacman -S reflector 
+#sudo passwd root
+sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+sudo sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
+sudo reflector --verbose --country 'United States' -l 200 -p http --sort rate --save /etc/pacman.d/mirrorlist
+
 sudo pacman -S --needed base-devel git cvs cvsps2 perl-libwww perl-term-readkey perl-mime-tools \
 perl-net-smtp-ssl perl-authen-sasl subversion rsync
+
 
 sudo sed -i '/\[extra\]/i \
 \[haskell\-core\] \
