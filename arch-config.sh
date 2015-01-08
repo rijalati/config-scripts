@@ -41,7 +41,7 @@ function reflector_mirrorlist
 
 function devenv_init
 {
-	sudo pacman -S --needed base-devel git cvs cvsps perl-libwww perl-term-readkey perl-mime-tools perl-net-smtp-ssl perl-authen-sasl subversion rsync fakeroot
+	sudo pacman -S --needed base-devel git cvs cvsps perl-libwww perl-term-readkey perl-mime-tools perl-net-smtp-ssl perl-authen-sasl subversion rsync fakeroot net-tools linux-headers
 	sudo wait ?!
 	
 }
